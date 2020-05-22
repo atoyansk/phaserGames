@@ -11,3 +11,14 @@ let config = {
 
 // Create a new game, pass the config
 let game = new Phaser.Game(config);
+
+//Load assets
+gameScene.preload = function() {
+    this.load.image('background', 'assets/background.png');
+    this.load.image('player', 'assets/player.png');
+};
+gameScene.create = function() {
+    let gameW = this.sys.game.config.width;
+    let gameH = this.sys.game.config.height;
+    this.add.sprite(0, 0, 'background').setPosition(gameW/2, gameH/2);
+};
