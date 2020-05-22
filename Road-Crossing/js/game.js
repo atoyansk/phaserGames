@@ -20,5 +20,8 @@ gameScene.preload = function() {
 gameScene.create = function() {
     let gameW = this.sys.game.config.width;
     let gameH = this.sys.game.config.height;
+
     this.add.sprite(0, 0, 'background').setPosition(gameW/2, gameH/2);
+
+    this.add.sprite(70, 120, 'player').setScale(0.5);
 };
