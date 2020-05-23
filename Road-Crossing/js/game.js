@@ -18,7 +18,7 @@ gameScene.init = function() {
     this.gameW = this.sys.game.config.width;
     this.gameH = this.sys.game.config.height;
 
-    this.playerSpeed = 2;
+    this.playerSpeed = 3;
     this.enemyMinSpeed = 2;
     this.enemyMaxSpeed = 4.5;
 
@@ -98,6 +98,14 @@ gameScene.update = function() {
 
         if(enemyUp || enemyDown) {
             enemies[i].speed *= -1;
+        }
+
+        let enemyRect = enemies[i].getBounds();
+
+        if(Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
+            this.scene.restart();
+
+            return;
         }
     }
 
