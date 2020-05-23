@@ -19,6 +19,11 @@ gameScene.init = function() {
     this.gameH = this.sys.game.config.height;
 
     this.playerSpeed = 2;
+    this.enemyMinSpeed = 2;
+    this.enemyMaxSpeed = 4.5;
+
+    this.enemyMinY = 80;
+    this.enemyMaxY = 280;
 }
 
 // Preload
@@ -35,18 +40,24 @@ gameScene.create = function() {
 
     this.player = this.add.sprite(70, this.gameH/2, 'player').setScale(0.5);
 
-    this.enemy1 = this.add.sprite(250, 180, 'enemy');
+    this.enemy = this.add.sprite(150, this.gameH/2, 'enemy').setScale(0.6);
+    this.enemy.flipX = true;
+
+    let dir = Math.random() < 0.5 ? 1 : -1;
+    let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+    this.enemy.speed = dir * speed;
 
     this.goal = this.add.sprite(this.gameW - 80, this.gameH/2, 'goal').setScale(0.7);
 };
 
 // Update
 gameScene.update = function() {
-
+    // Player movement
     if(this.input.activePointer.isDown) {
         this.player.x += this.playerSpeed;
     }
 
+    // Player and goal intersection
     let playerRect = this.player.getBounds();
     let goalRect = this.goal.getBounds();
 
@@ -54,6 +65,16 @@ gameScene.update = function() {
         this.scene.restart();
 
         return;
+    }
+
+    // Enemy movement
+    this.enemy.y += this.enemy.speed;
+
+    let enemyUp = this.enemy.speed < 0 && this.enemy.y <= this.enemyMinY;
+    let enemyDown = this.enemy.speed > 0 && this.enemy.y >= this.enemyMaxY;
+
+    if(enemyUp || enemyDown) {
+        this.enemy.speed *= -1;
     }
 
 }
