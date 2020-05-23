@@ -38,14 +38,33 @@ gameScene.create = function() {
     
     this.bg = this.add.sprite(0, 0, 'background').setPosition(this.gameW/2, this.gameH/2);
 
-    this.player = this.add.sprite(70, this.gameH/2, 'player').setScale(0.5);
+    this.player = this.add.sprite(40, this.gameH/2, 'player').setScale(0.5);
 
-    this.enemy = this.add.sprite(150, this.gameH/2, 'enemy').setScale(0.6);
-    this.enemy.flipX = true;
+    this.enemies = this.add.group({
+        key: 'enemy',
+        repeat: 4,
+        setXY: {
+            x: 120,
+            y: 100,
+            stepX: 90,
+            stepY: 20
+        }
+    });
 
-    let dir = Math.random() < 0.5 ? 1 : -1;
-    let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
-    this.enemy.speed = dir * speed;
+    // this.enemy = this.add.sprite(150, this.gameH/2, 'enemy');
+    // this.enemy.flipX = true;
+
+    // this.enemies.add(this.enemy);
+    Phaser.Actions.ScaleXY(this.enemies.getChildren(), -0.4, -0.4);
+
+    Phaser.Actions.Call(this.enemies.getChildren(), function(eachEnemy) {
+        eachEnemy.flipX = true;
+
+        let dir = Math.random() < 0.5 ? 1 : -1;
+        let speed = this.enemyMinSpeed + Math.random() * (this.enemyMaxSpeed - this.enemyMinSpeed);
+        eachEnemy.speed = dir * speed;
+    }, this);
+
 
     this.goal = this.add.sprite(this.gameW - 80, this.gameH/2, 'goal').setScale(0.7);
 };
@@ -68,13 +87,18 @@ gameScene.update = function() {
     }
 
     // Enemy movement
-    this.enemy.y += this.enemy.speed;
+    let enemies = this.enemies.getChildren();
+    let numEnemies = enemies.length;
 
-    let enemyUp = this.enemy.speed < 0 && this.enemy.y <= this.enemyMinY;
-    let enemyDown = this.enemy.speed > 0 && this.enemy.y >= this.enemyMaxY;
+    for(let i = 0; i < numEnemies; i++) {
+        enemies[i].y += enemies[i].speed;
 
-    if(enemyUp || enemyDown) {
-        this.enemy.speed *= -1;
+        let enemyUp = enemies[i].speed < 0 && enemies[i].y <= this.enemyMinY;
+        let enemyDown = enemies[i].speed > 0 && enemies[i].y >= this.enemyMaxY;
+
+        if(enemyUp || enemyDown) {
+            enemies[i].speed *= -1;
+        }
     }
 
 }
