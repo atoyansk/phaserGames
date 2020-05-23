@@ -26,6 +26,7 @@ gameScene.preload = function() {
     this.load.image('background', 'assets/background.png');
     this.load.image('player', 'assets/player.png');
     this.load.image('enemy', 'assets/dragon.png');
+    this.load.image('goal', 'assets/treasure.png');
 };
 // Create
 gameScene.create = function() {
@@ -35,6 +36,8 @@ gameScene.create = function() {
     this.player = this.add.sprite(70, this.gameH/2, 'player').setScale(0.5);
 
     this.enemy1 = this.add.sprite(250, 180, 'enemy');
+
+    this.goal = this.add.sprite(this.gameW - 80, this.gameH/2, 'goal').setScale(0.7);
 };
 
 // Update
@@ -43,5 +46,14 @@ gameScene.update = function() {
     if(this.input.activePointer.isDown) {
         this.player.x += this.playerSpeed;
     }
-    
+
+    let playerRect = this.player.getBounds();
+    let goalRect = this.goal.getBounds();
+
+    if(Phaser.Geom.Intersects.RectangleToRectangle(playerRect, goalRect)) {
+        this.scene.restart();
+
+        return;
+    }
+
 }
