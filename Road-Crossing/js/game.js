@@ -18,12 +18,14 @@ gameScene.init = function() {
     this.gameW = this.sys.game.config.width;
     this.gameH = this.sys.game.config.height;
 
-    this.playerSpeed = 3;
+    this.playerSpeed = 3.5;
     this.enemyMinSpeed = 2;
     this.enemyMaxSpeed = 4.5;
 
     this.enemyMinY = 80;
     this.enemyMaxY = 280;
+
+    this.isFinishing = false;
 }
 
 // Preload
@@ -51,10 +53,6 @@ gameScene.create = function() {
         }
     });
 
-    // this.enemy = this.add.sprite(150, this.gameH/2, 'enemy');
-    // this.enemy.flipX = true;
-
-    // this.enemies.add(this.enemy);
     Phaser.Actions.ScaleXY(this.enemies.getChildren(), -0.4, -0.4);
 
     Phaser.Actions.Call(this.enemies.getChildren(), function(eachEnemy) {
@@ -71,6 +69,8 @@ gameScene.create = function() {
 
 // Update
 gameScene.update = function() {
+
+    if(this.isFinishing) return;
     // Player movement
     if(this.input.activePointer.isDown) {
         this.player.x += this.playerSpeed;
@@ -81,9 +81,7 @@ gameScene.update = function() {
     let goalRect = this.goal.getBounds();
 
     if(Phaser.Geom.Intersects.RectangleToRectangle(playerRect, goalRect)) {
-        this.scene.restart();
-
-        return;
+        return this.gameOver();
     }
 
     // Enemy movement
@@ -103,10 +101,23 @@ gameScene.update = function() {
         let enemyRect = enemies[i].getBounds();
 
         if(Phaser.Geom.Intersects.RectangleToRectangle(playerRect, enemyRect)) {
-            this.scene.restart();
 
-            return;
+            return this.gameOver();
         }
     }
+}
 
+gameScene.gameOver = function() {
+
+    this.isFinishing = true;
+
+    this.cameras.main.shake(500);
+    this.cameras.main.on('camerashakecomplete', function(camera, effect) {
+        this.cameras.main.fade(500);
+    }, this);
+
+    this.cameras.main.on('camerafadeoutcomplete', function(camera, effect) {
+        this.scene.restart();
+    }, this);
+    
 }
