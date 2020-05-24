@@ -46,4 +46,12 @@ gameScene.create = function() {
     ]);
 
     this.items.setDepth(1);
+
+    Phaser.Actions.Call(this.items.getChildren(), function(item) {
+        item.setInteractive();
+
+        item.on('pointerdown', function(pointer) {
+            console.log('You clicked ' + item.texture.key);
+        }, this);
+    })
 }
