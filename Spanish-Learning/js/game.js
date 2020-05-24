@@ -38,6 +38,12 @@ gameScene.create = function() {
 
     this.add.sprite(0, 0, 'background').setPosition(this.gameW/2, this.gameH/2);
 
-    let soundCorrect = this.sound.add('correct');
-    soundCorrect.play();
+    this.items = this.add.group([
+        { key: 'building', setXY: { x: 100, y: 240 } },
+        { key: 'house', setXY: { x: 240, y: 280 }, setScale: { x: 0.8, y: 0.8 } },
+        { key: 'car', setXY: { x: 400, y: 300 }, setScale: { x: 0.8, y: 0.8 } },
+        { key: 'tree', setXY: { x: 550, y: 250 } }
+    ]);
+
+    this.items.setDepth(1);
 }
