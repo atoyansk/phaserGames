@@ -50,8 +50,35 @@ gameScene.create = function() {
     Phaser.Actions.Call(this.items.getChildren(), function(item) {
         item.setInteractive();
 
+        item.resizeTween = gameScene.tweens.add({
+            targets: item,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 300,
+            paused: true,
+            yoyo: true,
+            ease: 'Quad.easeInOut'
+        });
+
+        item.alphaTween = gameScene.tweens.add({
+            targets: item,
+            alpha: 0.7,
+            duration: 200,
+            paused: true
+        });
+
         item.on('pointerdown', function(pointer) {
-            console.log('You clicked ' + item.texture.key);
+            item.resizeTween.play();
         }, this);
+
+        item.on('pointerover', function(pointer) {
+            item.alphaTween.play();
+        }, this);
+
+        item.on('pointerout', function(pointer) {
+            item.alphaTween.stop();
+            item.alpha = 1;
+        }, this);
+
     })
 }
