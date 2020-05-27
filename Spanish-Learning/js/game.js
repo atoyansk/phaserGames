@@ -16,6 +16,13 @@ gameScene.init = function() {
     this.gameW = this.sys.game.config.width;
     this.gameH = this.sys.game.config.height;
 
+    this.words = [
+        { key: 'building', setXY: { x: 100, y: 240 }, spanish: 'edificio' },
+        { key: 'house', setXY: { x: 240, y: 280 }, setScale: { x: 0.8, y: 0.8 }, spanish: 'casa' },
+        { key: 'car', setXY: { x: 400, y: 300 }, setScale: { x: 0.8, y: 0.8 }, spanish: 'automóvil' },
+        { key: 'tree', setXY: { x: 550, y: 250 }, spanish: 'árbol' }
+    ]
+
 }
 
 gameScene.preload = function() {
@@ -38,16 +45,16 @@ gameScene.create = function() {
 
     this.add.sprite(0, 0, 'background').setPosition(this.gameW/2, this.gameH/2);
 
-    this.items = this.add.group([
-        { key: 'building', setXY: { x: 100, y: 240 } },
-        { key: 'house', setXY: { x: 240, y: 280 }, setScale: { x: 0.8, y: 0.8 } },
-        { key: 'car', setXY: { x: 400, y: 300 }, setScale: { x: 0.8, y: 0.8 } },
-        { key: 'tree', setXY: { x: 550, y: 250 } }
-    ]);
+    this.items = this.add.group(this.words);
 
     this.items.setDepth(1);
 
-    Phaser.Actions.Call(this.items.getChildren(), function(item) {
+    let items = this.items.getChildren();
+
+    for(let i = 0; i < items.length; i++) {
+        
+        let item = items[i];
+
         item.setInteractive();
 
         item.resizeTween = gameScene.tweens.add({
@@ -69,6 +76,7 @@ gameScene.create = function() {
 
         item.on('pointerdown', function(pointer) {
             item.resizeTween.play();
+            this.showNextQuestion();
         }, this);
 
         item.on('pointerover', function(pointer) {
@@ -80,5 +88,22 @@ gameScene.create = function() {
             item.alpha = 1;
         }, this);
 
-    })
+        this.words[i].sound = this.sound.add(this.words[i].key + '-audio');
+
+    };
+
+    this.wordText = this.add.text(30, 20, ' ', {
+        font: '28px Open Sans',
+        fill: '#FFFFFF'
+    });
+
+    this.showNextQuestion();
+}
+
+gameScene.showNextQuestion = function() {
+    let nextWord = Phaser.Math.RND.pick(this.words);
+
+    nextWord.sound.play();
+
+    this.wordText.setText(nextWord.spanish);
 }
